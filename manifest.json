@@ -1,0 +1,22 @@
+{
+  "short_name": "Timetable",
+  "name": "BPUT Smart Timetable",
+  "description": "A smart timetable for BPUT students.",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Purna760/My_Folder/refs/heads/main/CompressJPEG.Online_img(192x192).png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/Purna760/My_Folder/refs/heads/main/CompressJPEG.Online_img(512x512).png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#1F2937"
+}
