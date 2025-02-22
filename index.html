@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1F2937">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Purna760/My_Folder/refs/heads/main/CompressJPEG.Online_img(192x192).png">
+    <title>ECE Timetable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            width: 60px;
+            height: auto;
+            margin-right: 1rem;
+        }
+
+        .header-content {
+            text-align: left;
+        }
+
+        .header h4 {
+            font-size: 1.25rem;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #4B5563;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-card-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-card-content p:first-child {
+            color: #6B7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-card-content p:last-child {
+            color: #111827;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .timetable-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: #1F2937;
+            color: white;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            background: #F9FAFB;
+            text-align: left;
+        }
+
+        .time-range {
+            display: block;
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Subject Colors */
+        .dsd { background-color: #FEE2E2; }
+        .dsd:hover { background-color: #FECACA; }
+        
+        .pcs { background-color: #DBEAFE; }
+        .pcs:hover { background-color: #BFDBFE; }
+        
+        .cs { background-color: #D1FAE5; }
+        .cs:hover { background-color: #A7F3D0; }
+        
+        .acc { background-color: #FEF3C7; }
+        .acc:hover { background-color: #FDE68A; }
+        
+        .ob { background-color: #F3E8FF; }
+        .ob:hover { background-color: #E9D5FF; }
+        
+        .emt { background-color: #FFEDD5; }
+        .emt:hover { background-color: #FED7AA; }
+        
+        .library { 
+            background-color: #F3F4F6;
+            cursor: default;
+        }
+        
+        .python { background-color: #E0F2FE; }
+        .python:hover { background-color: #BAE6FD; }
+        
+        .sire { 
+            background-color: #FCE7F3;
+            cursor: default;
+        }
+        
+        .lunch { 
+            background: linear-gradient(to right, #FEF3C7, #F2348D5);
+            cursor: default;
+        }
+        
+        .yoga { 
+            background-color: #EEF2FF;
+            cursor: default;
+        }
+        
+        .holiday { 
+            background-color: #FEE2E2;
+            cursor: default;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .overlay iframe {
+            width: 90%;
+            height: 90%;
+            border: none;
+            border-radius: 0.5rem;
+            background: white;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+
+            .header img {
+                width: 50px;
+                margin-bottom: 1rem;
+            }
+
+            .header h4 {
+                font-size: 1rem;
+            }
+
+            .header p {
+                font-size: 0.75rem;
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 1rem;
+            }
+
+            .info-card-content p:last-child {
+                font-size: 1rem;
+            }
+
+            td, th {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .time-range {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+        <div class="header">
+            <img src="https://upload.wikimedia.org/wikipedia/en/e/ec/Official_logo_of_Biju_Patanaik_University_of_Technology.png" alt="BPUT Logo">
+            <div class="header-content">
+                <h4>CENTRE FOR UG & PG STUDIES, ROURKELA, BPUT, ODISHA</h4>
+                <p>Electronics & Communication Engineering Department</p>
+                <p>4th Semester Timetable</p>
+            </div>
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="info-card-content">
+                    <p>Current Time</p>
+                    <p id="current-time">Loading...</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                </div>
+                <div class="info-card-content">
+                    <p>Current Subject</p>
+                    <p id="current-subject">Loading...</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </div>
+                <div class="info-card-content">
+                    <p>Next Class</p>
+                    <p id="next-class">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="timetable-container">
+            <div class="table-wrapper">
+                <table id="timetable">
+                    <thead>
+                        <tr>
+                            <th>Day/Time</th>
+                            <th>9:30 AM - 10:30 AM</th>
+                            <th>10:30 AM - 11:30 AM</th>
+                            <th>11:30 AM - 12:30 PM</th>
+                            <th>12:30 PM - 1:30 PM</th>
+                            <th>1:30 PM - 2:30 PM</th>
+                            <th>2:30 PM - 3:30 PM</th>
+                            <th>3:30 PM - 4:30 PM</th>
+                            <th>4:30 PM - 5:30 PM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monday</td>
+                            <td class="dsd clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/DSD/')">DSD (BBM)</td>
+                            <td class="pcs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/PCS/')">PCS (AKP)</td>
+                            <td class="cs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/CS/')">CS (AP)</td>
+                            <td class="acc clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/ACC/')">ACC</td>
+                            <td class="lunch">Lunch Break</td>
+                            <td colspan="3" class="dsd clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/DSDL/')">
+                                DSD Lab (PS & RKC)
+                                <span class="time-range">2:30 PM - 5:30 PM</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tuesday</td>
+                            <td class="ob clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/OB/')">OB (PP)</td>
+                            <td colspan="3" class="pcs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/PCSL/')">
+                                PCS Lab (AKP & SLP)
+                                <span class="time-range">10:30 AM - 1:30 PM</span>
+                            </td>
+                            <td class="lunch">Lunch Break</td>
+                            <td colspan="3" class="cs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/CSL/')">
+                                CS Lab (AP)
+                                <span class="time-range">2:30 PM - 5:30 PM</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Wednesday</td>
+                            <td class="dsd clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/DSD/')">DSD (BBM)</td>
+                            <td class="cs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/CS/')">CS (AP)</td>
+                            <td colspan="2" class="acc clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/ACC/')">
+                                ACC
+                                <span class="time-range">11:30 AM - 1:30 PM</span>
+                            </td>
+                            <td class="lunch">Lunch Break</td>
+                            <td class="ob clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/OB/')">OB (PP)</td>
+                            <td class="emt clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/EMT/')">EMT (SLP)</td>
+                            <td class="library">Library</td>
+                        </tr>
+                        <tr>
+                            <td>Thursday</td>
+                            <td class="pcs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/PCS/')">PCS (AKP)</td>
+                            <td class="emt clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/EMT/')">EMT (SLP)</td>
+                            <td class="ob clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/OB/')">OB (PP)</td>
+                            <td class="library">Library</td>
+                            <td class="lunch">Lunch Break</td>
+                            <td colspan="3" class="python clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/PYL/')">
+                                Python Lab (NPS)
+                                <span class="time-range">2:30 PM - 5:30 PM</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Friday</td>
+                            <td class="dsd clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/DSD/')">DSD (BBM)</td>
+                            <td class="cs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/CS/')">CS (AP)</td>
+                            <td class="library">Library</td>
+                            <td class="emt clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/EMT/')">EMT (SLP)</td>
+                            <td class="lunch">Lunch Break</td>
+                            <td class="pcs clickable" onclick="openOverlay('https://asmit-coder-arduino.github.io/PCS/')">PCS (ASK)</td>
+                            <td colspan="2" class="sire">
+                                SIRE (BD)
+                                <span class="time-range">3:30 PM - 5:30 PM</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Saturday</td>
+                            <td colspan="8" class="yoga">
+                                Yoga/NCC/NSS
+                                <span class="time-range">9:30 AM - 5:30 PM</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sunday</td>
+                            <td colspan="8" class="holiday">Holiday</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <button class="close-button" onclick="closeOverlay()">×</button>
+        <iframe id="overlay-iframe" src=""></iframe>
+    </div>
+
+    <script>
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        
+        const timetable = {
+            Monday: ["DSD (BBM)", "PCS (AKP)", "CS (AP)", "ACC", "Lunch Break", "DSD Lab (PS & RKC)", "DSD Lab (PS & RKC)", "DSD Lab (PS & RKC)"],
+            Tuesday: ["OB (PP)", "PCS Lab (AKP & SLP)", "PCS Lab (AKP & SLP)", "PCS Lab (AKP & SLP)", "Lunch Break", "CS Lab (AP)", "CS Lab (AP)", "CS Lab (AP)"],
+            Wednesday: ["DSD (BBM)", "CS (AP)", "ACC", "ACC", "Lunch Break", "OB (PP)", "EMT (SLP)", "Library"],
+            Thursday: ["PCS (AKP)", "EMT (SLP)", "OB (PP)", "Library", "Lunch Break", "Python Lab (NPS)", "Python Lab (NPS)", "Python Lab (NPS)"],
+            Friday: ["DSD (BBM)", "CS (AP)", "Library", "EMT (SLP)", "Lunch Break", "PCS (ASK)", "SIRE (BD)", "SIRE (BD)"],
+            Saturday: ["Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS", "Yoga/NCC/NSS"],
+            Sunday: ["Holiday", "Holiday", "Holiday", "Holiday", "Holiday", "Holiday", "Holiday", "Holiday"]
+        };
+
+        const periodTimes = ["09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30"];
+
+        function formatTimeWithAMPM(time) {
+            const [hours, minutes] = time.split(":");
+            const formattedHours = hours % 12 || 12;
+            const ampm = hours >= 12 ? "PM" : "AM";
+            return `${formattedHours}:${minutes} ${ampm}`;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const currentDay = days[now.getDay()];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? "PM" : "AM";
+            const formattedHours = hours % 12 || 12;
+
+            document.getElementById('current-time').textContent = 
+                `${formattedHours}:${minutes}:${seconds} ${ampm} ${currentDay}`;
+
+            let currentSubject = "No class at the moment";
+            let nextClass = { time: "No more classes today", subject: "", countdown: "" };
+
+            if (hours >= 9 && hours < 17) {
+                const period = Math.floor((hours - 9) + (minutes / 60));
+                if (period >= 0 && period < timetable[currentDay].length) {
+                    currentSubject = timetable[currentDay][period];
+
+                    if (period < timetable[currentDay].length - 1) {
+                        const nextSubject = timetable[currentDay][period + 1];
+                        const [nextHours, nextMinutes] = periodTimes[period + 1].split(":").map(Number);
+                        
+                        const nowInMinutes = hours * 60 + minutes;
+                        const nextClassInMinutes = nextHours * 60 + nextMinutes;
+                        
+                        const timeDiff = nextClassInMinutes - nowInMinutes;
+                        if (timeDiff > 0) {
+                            const countdownHours = Math.floor(timeDiff / 60);
+                            const countdownMinutes = timeDiff % 60;
+                            nextClass = {
+                                time: formatTimeWithAMPM(periodTimes[period + 1]),
+                                subject: nextSubject,
+                                countdown: `${countdownHours}h ${countdownMinutes}m`
+                            };
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('current-subject').textContent = currentSubject;
+            document.getElementById('next-class').textContent = 
+                nextClass.subject ? `${nextClass.subject} (in ${nextClass.countdown})` : nextClass.time;
+        }
+
+        function openOverlay(url) {
+            document.getElementById('overlay-iframe').src = url;
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeOverlay() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('overlay-iframe').src = '';
+        }
+
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+</body>
+</html>
